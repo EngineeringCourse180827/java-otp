@@ -4,15 +4,17 @@ public class AuthenticationService {
 
     private Profile profile;
     private Token token;
+    private AuthLogger logger;
 
     public AuthenticationService() {
         profile = new ProfileImpl();
         token = new RsaTokenImpl();
     }
 
-    public AuthenticationService(Profile profile, Token token) {
+    public AuthenticationService(Profile profile, Token token, AuthLogger logger) {
         this.profile = profile;
         this.token = token;
+        this.logger = logger;
     }
 
     public boolean isValid(String account, String password) {
@@ -29,6 +31,7 @@ public class AuthenticationService {
         if (isValid) {
             return true;
         } else {
+            logger.save(String.format("account: %s try to login failed.", account));
             return false;
         }
     }
