@@ -40,9 +40,23 @@ public class AuthenticationServiceTest {
 
         target.isValid("joey", "wrong pass code");
 
+        shouldLog("joey", "login failed");
+    }
+
+    @Test
+    public void not_save_log_when_valid() {
+        givenPassword("joey", "91");
+        givenToken("000000");
+
+        target.isValid("joey", "91000000");
+
+        verify(mockAuthLogger, never()).save(anyString());
+    }
+
+    private void shouldLog(String... messages) {
         ArgumentCaptor<String> captor = forClass(String.class);
         verify(mockAuthLogger).save(captor.capture());
-        assertThat(captor.getValue()).contains("joey", "login failed");
+        assertThat(captor.getValue()).contains(messages);
     }
 
     private void shouldBeInvalid(String account, String passCode) {
